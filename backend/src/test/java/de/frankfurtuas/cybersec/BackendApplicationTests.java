@@ -1,13 +1,13 @@
-package de.frankfurtuas.cybersec.passkeys;
+package de.frankfurtuas.cybersec;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PasskeysApplicationTests {
+class BackendApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
