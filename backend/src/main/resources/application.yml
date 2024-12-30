@@ -1,0 +1,13 @@
+
+# Spring Security OAuth2 Resource Server Configuration
+spring:
+  application:
+    name: keycloak-with-passkeys
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/test-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+server:
+  port: 8081
