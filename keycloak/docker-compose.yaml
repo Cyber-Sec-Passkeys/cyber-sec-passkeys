@@ -27,8 +27,11 @@ services:
       - "8080:8080"
     command:
       - start-dev
+      - --import-realm
     depends_on:
       - postgres
+    volumes:
+      - ./realm-config:/opt/keycloak/data/import
     networks:
       - keycloak-network
 
