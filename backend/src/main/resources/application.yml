@@ -1,13 +1,40 @@
-
 # Spring Security OAuth2 Resource Server Configuration
 spring:
-  application:
-    name: keycloak-with-passkeys
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/test-realm
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/uas-finance
+        registration:
+          keycloak:
+            client-id: uas-finance-client
+            client-secret: <client-secret>
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/keycloak-passkeys
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8081
+
+keycloak:
+  realm: uas-finance
+  auth-server-url: http://localhost:8080/
+  resource: uas-finance-client
+  public-client: true
+  use-resource-role-mappings: true
+
+logging:
+  level:
+    root: info
+    org.springframework: debug
+    com.your.package: trace
