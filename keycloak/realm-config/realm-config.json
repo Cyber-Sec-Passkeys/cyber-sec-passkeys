@@ -1,0 +1,84 @@
+{
+  "realm": "uas-finance",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "users": [
+    {
+      "username": "customer1",
+      "email": "customer1@uas-finance.com",
+      "firstName": "customer1",
+      "lastName": "customer1",
+      "enabled": true,
+      "emailVerified": false,
+      "realmRoles": [
+        "customer"
+      ]
+    },
+    {
+      "username": "finance-staff",
+      "email": "finance1@uas-finance.com",
+      "firstName": "finance",
+      "lastName": "staff",
+      "enabled": true,
+      "emailVerified": false,
+      "realmRoles": [
+        "finance-staff"
+      ]
+    },
+    {
+      "username": "loan-approver",
+      "email": "loanapprover@uas-finance.com",
+      "firstName": "loan",
+      "lastName": "approver",
+      "enabled": true,
+      "emailVerified": false,
+      "realmRoles": [
+        "loan-approver"
+      ]
+    },
+    {
+      "username": "loan-processor",
+      "email": "loanprocessor@uas-finance.com",
+      "firstName": "loan",
+      "lastName": "processor",
+      "enabled": true,
+      "emailVerified": false,
+      "realmRoles": [
+        "loan-processor"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "customer",
+        "description": "Allows customers to apply for loans and manage their financial data."
+      },
+      {
+        "name": "finance-staff",
+        "description": "Finance staff who can access financial dashboard and customer data."
+      },
+      {
+        "name": "loan-approver",
+        "description": "Loan approver who inherits finance-staff and approves/rejects loans.",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "finance-staff"
+          ]
+        }
+      },
+      {
+        "name": "loan-processor",
+        "description": "Loan processor who inherits finance-staff and disburses approved loans.",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "finance-staff"
+          ]
+        }
+      }
+    ]
+  }
+}
