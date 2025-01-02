@@ -5,7 +5,7 @@ import Keycloak from 'keycloak-js';
   providedIn: 'root',
 })
 export class KeycloakService {
-  private keycloak: Keycloak.KeycloakInstance;
+  private keycloak: Keycloak;
 
   constructor() {
     this.keycloak = new Keycloak({
