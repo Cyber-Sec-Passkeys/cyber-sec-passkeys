@@ -1,26 +1,33 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class KeycloakService {
   private keycloakInstance: Keycloak.KeycloakInstance;
-  private tokenKey = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJWHU4VW5kcTdlOWNUbHFzSFNqZTJLX0xyOG1LZnBQLU1sY2xEVFVucENRIn0.eyJleHAiOjE3MzYyNzMzNDAsImlhdCI6MTczNjI3MzI4MCwianRpIjoiNmViMWQ4MmQtODY1YS00ZDQzLWFiNzEtZWMwMjYzNWNjMjRkIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOlsibWFzdGVyLXJlYWxtIiwiYnJva2VyIiwiYWNjb3VudCJdLCJzdWIiOiIyODZmNTQxMC0zNTVhLTQwMTUtYmIyMy04NGRiYWM1MDg3NGQiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ0ZXN0IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjQyMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbWFzdGVyIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7Im1hc3Rlci1yZWFsbSI6eyJyb2xlcyI6WyJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sImJyb2tlciI6eyJyb2xlcyI6WyJyZWFkLXRva2VuIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50Iiwidmlldy1hcHBsaWNhdGlvbnMiLCJ2aWV3LWNvbnNlbnQiLCJ2aWV3LWdyb3VwcyIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwiZGVsZXRlLWFjY291bnQiLCJtYW5hZ2UtY29uc2VudCIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImNsaWVudEhvc3QiOiIxNzIuMTguMC4xIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdGVzdCIsImNsaWVudEFkZHJlc3MiOiIxNzIuMTguMC4xIiwiY2xpZW50X2lkIjoidGVzdCJ9.O8Y978dmw2qAwbJNbmjVUeRi7B23XNFLHVMO_34-Qr2W5dMF0xtNrN5xbfMliEiIbjND1MJD9D1qSe2q0LiUK0LJcZntEJhKOU2K3tVPc5M9oFKYsBU7dA1jDx9sIy8iFYfVcOHiBAxWmqIvyQNqSMyr9pEEGDylLfcXQrOIcLbsSUBdfUI-jv6QsvSpxNTut-MhaaBlnv8trM6vM7A7Ibf9Dds6KF-JCfYGm9dz-kdrEkF6kHQaFM5VWtNAEP8t60izs5o0DCQlYf74f9ZJiv4qTPK3nxvDbICmiVtxkALLxqcFhNyrlWUhr49w5dP22iZ1e5VmD1YD2l6rcDxk8A';
-  private clientId = 'test'; 
-  private clientSecret = 'I5jTe5XuQiXaldYYu4NyZCQqMEq3le9f'; 
-  private tokenUrl = 'http://localhost:8080/realms/master/protocol/openid-connect/token'; 
+  private tokenKey =
+    'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJWHU4VW5kcTdlOWNUbHFzSFNqZTJLX0xyOG1LZnBQLU1sY2xEVFVucENRIn0.eyJleHAiOjE3MzYyNzMzNDAsImlhdCI6MTczNjI3MzI4MCwianRpIjoiNmViMWQ4MmQtODY1YS00ZDQzLWFiNzEtZWMwMjYzNWNjMjRkIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOlsibWFzdGVyLXJlYWxtIiwiYnJva2VyIiwiYWNjb3VudCJdLCJzdWIiOiIyODZmNTQxMC0zNTVhLTQwMTUtYmIyMy04NGRiYWM1MDg3NGQiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ0ZXN0IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjQyMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbWFzdGVyIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7Im1hc3Rlci1yZWFsbSI6eyJyb2xlcyI6WyJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sImJyb2tlciI6eyJyb2xlcyI6WyJyZWFkLXRva2VuIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50Iiwidmlldy1hcHBsaWNhdGlvbnMiLCJ2aWV3LWNvbnNlbnQiLCJ2aWV3LWdyb3VwcyIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwiZGVsZXRlLWFjY291bnQiLCJtYW5hZ2UtY29uc2VudCIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImNsaWVudEhvc3QiOiIxNzIuMTguMC4xIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdGVzdCIsImNsaWVudEFkZHJlc3MiOiIxNzIuMTguMC4xIiwiY2xpZW50X2lkIjoidGVzdCJ9.O8Y978dmw2qAwbJNbmjVUeRi7B23XNFLHVMO_34-Qr2W5dMF0xtNrN5xbfMliEiIbjND1MJD9D1qSe2q0LiUK0LJcZntEJhKOU2K3tVPc5M9oFKYsBU7dA1jDx9sIy8iFYfVcOHiBAxWmqIvyQNqSMyr9pEEGDylLfcXQrOIcLbsSUBdfUI-jv6QsvSpxNTut-MhaaBlnv8trM6vM7A7Ibf9Dds6KF-JCfYGm9dz-kdrEkF6kHQaFM5VWtNAEP8t60izs5o0DCQlYf74f9ZJiv4qTPK3nxvDbICmiVtxkALLxqcFhNyrlWUhr49w5dP22iZ1e5VmD1YD2l6rcDxk8A';
+  private clientId = 'test';
+  private clientSecret = 'I5jTe5XuQiXaldYYu4NyZCQqMEq3le9f';
+  private tokenUrl =
+    'http://localhost:8080/realms/master/protocol/openid-connect/token';
   private refreshTokenKey = 'refresh_token';
 
   constructor() {
     this.keycloakInstance = new Keycloak({
-      url: 'http://localhost:8080',
-      realm: 'master',
-      clientId: this.clientId,
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId,
     });
   }
 
-  async initKeycloak(clientId: string, realm: string, url: string): Promise<boolean> {
+  async initKeycloak(
+    clientId: string,
+    realm: string,
+    url: string
+  ): Promise<boolean> {
     try {
       this.keycloakInstance = new Keycloak({
         url: url,
@@ -31,7 +38,8 @@ export class KeycloakService {
       const authenticated = await this.keycloakInstance.init({
         onLoad: 'check-sso',
         checkLoginIframe: false,
-        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
+        silentCheckSsoRedirectUri:
+          window.location.origin + '/assets/silent-check-sso.html',
         redirectUri: window.location.origin,
       });
 
