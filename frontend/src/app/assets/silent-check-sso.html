@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Silent SSO Check</title>
+    <script>
+      // This script checks whether the user is authenticated with Keycloak.
+      var keycloak = new Keycloak({
+        url: 'http://localhost:8080', // Replace with your Keycloak server URL
+        realm: 'master', // Replace with your Keycloak realm
+        clientId: 'test', // Replace with your client ID
+      });
+
+      keycloak.init({ onLoad: 'check-sso' }).then(function (authenticated) {
+        if (authenticated) {
+          // Keycloak session exists, redirect back to the app
+          window.location.reload();
+        } else {
+          // No session, keep the page blank or show an error
+          window.location.href = '/';
+        }
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

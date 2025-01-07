@@ -18,7 +18,7 @@
 
     .registration-container {
       background: #fff;
-      padding: 20px;
+      padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       width: 350px;
@@ -27,23 +27,23 @@
 
     .registration-container h1 {
       margin-bottom: 20px;
-      font-size: 24px;
+      font-size: 28px;
       color: #333;
     }
 
     .registration-container input[type="text"],
     .registration-container input[type="password"] {
-      width: 70%;
-      padding: 10px;
-      margin: 10px 0;
+      width: 80%;
+      padding: 12px;
+      margin: 12px 0;
       border: 1px solid #ddd;
       border-radius: 5px;
       font-size: 16px;
     }
 
     .registration-container button {
-      width: 70%;
-      padding: 10px;
+      width: 80%;
+      padding: 12px;
       background-color: #28a745;
       border: none;
       border-radius: 5px;
@@ -61,12 +61,21 @@
       font-size: 14px;
       color: #666;
     }
+
+    .registration-container a {
+      text-decoration: none;
+      color: #28a745;
+    }
+
+    .registration-container a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="registration-container">
     <h1>Register</h1>
-    <form id="registrationForm">
+    <form (submit)="onSubmit($event)">
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
@@ -74,25 +83,5 @@
     </form>
     <p>Already have an account? <a href="login">Login</a></p>
   </div>
-
-  <script>
-    document.getElementById('registrationForm').addEventListener('submit', function (e) {
-      e.preventDefault(); // Prevent form submission
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-
-      if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-      }
-
-      // Example: Send data to server or handle registration logic
-      console.log(`Username: ${username}, Password: ${password}`);
-
-      alert('Registration functionality not implemented yet.');
-    });
-  </script>
 </body>
 </html>
-

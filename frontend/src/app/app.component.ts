@@ -1,12 +1,45 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { KeycloakService } from './core/services/keycloak.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.css'],
+  imports: [RouterModule], // Add RouterModule if needed
 })
-export class AppComponent {
-  title = 'cyber-sec-passkey-frontend';
+export class AppComponent implements OnInit {
+  private refreshInterval: any;
+
+  constructor(private keycloakService: KeycloakService) {}
+
+  ngOnInit(): void {
+    this.keycloakService.initKeycloak('test', 'master', 'http://localhost:8080').then((authenticated) => {
+      if (authenticated) {
+        console.log('User is authenticated');
+        this.refreshTokenPeriodically(); // Start refreshing the token periodically
+      } else {
+        console.log('User is not authenticated');
+      }
+    });
+  }
+
+  refreshTokenPeriodically(): void {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval); // Clear any existing intervals
+    }
+
+    this.refreshInterval = setInterval(async () => {
+      try {
+        const response = await this.keycloakService.refreshToken(); // Use async/await here
+        if (response && response.access_token) {
+          this.keycloakService.saveToken(response.access_token);  // Save the new access token
+          console.log('Token refreshed successfully');
+        }
+      } catch (error) {
+        console.error('Error refreshing token', error);
+      }
+    }, 10 * 60 * 1000); 
+  }
 }
