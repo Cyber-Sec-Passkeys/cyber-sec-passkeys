@@ -1,13 +1,44 @@
-
 # Spring Security OAuth2 Resource Server Configuration
 spring:
-  application:
-    name: keycloak-with-passkeys
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/test-realm
+          # Keycloak realm URL for validating JWT tokens
+          issuer-uri: http://localhost:8080/realms/uas-finance
+          # the JWKS endpoint for verifying JWT signatures
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  # Database configuration for connecting to PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/keycloak-passkeys
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  # JPA and Hibernate configurations
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Server configuration to set the port
 server:
+  # Backend application will run on this port
   port: 8081
+
+# JWT token authentication settings
+jwt:
+  auth:
+    converter:
+      resource-id: uas-finance-client
+      principle-attribute: preferred_username
+
+# Logging configuration
+logging:
+  level:
+    root: info
+    org.springframework: debug
+    com.your.package: trace
