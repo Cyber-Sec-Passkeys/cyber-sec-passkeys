@@ -11,9 +11,9 @@ spring:
 
   # Database configuration for connecting to PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5432/keycloak-passkeys
-    username: postgres
-    password: root
+    url: jdbc:postgresql://localhost:5432/backend
+    username: root
+    password: password
     driver-class-name: org.postgresql.Driver
 
   # JPA and Hibernate configurations
