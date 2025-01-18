@@ -15,6 +15,7 @@ export class RegisterComponent {
     event.preventDefault();
     const username = (document.getElementById('username') as HTMLInputElement).value;
     const password = (document.getElementById('password') as HTMLInputElement).value;
+    const email = (document.getElementById('email') as HTMLInputElement).value;
     const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
 
     if (password !== confirmPassword) {
@@ -23,7 +24,7 @@ export class RegisterComponent {
     }
 
     // Register the user by calling the service
-    this.registrationService.registerUser(username, password).subscribe(
+    this.registrationService.registerUser(username,email, password).subscribe(
       (      response) => {
         console.log('User registered successfully:', response);
         alert('Registration successful!');
@@ -34,4 +35,12 @@ export class RegisterComponent {
       }
     );
   }
+
+  registerWithPasskey() {
+    const username = (document.getElementById('username') as HTMLInputElement).value;
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    this.registrationService.registerWithPasskey(username, email);
+  }
+
+
 }

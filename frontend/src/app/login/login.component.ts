@@ -27,4 +27,10 @@ export class LoginComponent {
       }
     });
   }
+
+  loginWithPasskey() {
+    this.loginService.loginWithPasskey();
+  }
+
+
 }
