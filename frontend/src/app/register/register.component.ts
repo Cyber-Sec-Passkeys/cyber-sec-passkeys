@@ -37,10 +37,6 @@ export class RegisterComponent {
   }
 
   registerWithPasskey() {
-    const username = (document.getElementById('username') as HTMLInputElement).value;
-    const email = (document.getElementById('email') as HTMLInputElement).value;
-    this.registrationService.registerWithPasskey(username, email);
+    this.registrationService.registerWithPasskey();
   }
-
-
 }

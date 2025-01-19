@@ -27,6 +27,7 @@ services:
       - "8080:8080"
     command:
       - start-dev
+      - --features=passkeys
     depends_on:
       - postgres
     networks:
