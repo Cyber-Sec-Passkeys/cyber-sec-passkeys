@@ -14,9 +14,10 @@ export class RegisterComponent {
   onSubmit(event: Event) {
     event.preventDefault();
     const username = (document.getElementById('username') as HTMLInputElement).value;
-    const password = (document.getElementById('password') as HTMLInputElement).value;
     const email = (document.getElementById('email') as HTMLInputElement).value;
-    const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
+    this.registrationService.redirectToKeycloakRegistration(username);
+
+    /*const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
 
     if (password !== confirmPassword) {
       alert('Passwords do not match!');
@@ -33,14 +34,13 @@ export class RegisterComponent {
         console.error('Error during registration:', error);
         alert('Registration failed. Please try again.');
       }
-    );
-  }
+    ); */
+  } 
 
   registerWithPasskey() {
+    //this.registrationService.registerWithPasskey();
     const username = (document.getElementById('username') as HTMLInputElement).value;
     const email = (document.getElementById('email') as HTMLInputElement).value;
-    this.registrationService.registerWithPasskey(username, email);
+    this.registrationService.redirectToKeycloakRegistration(username);
   }
-
-
 }

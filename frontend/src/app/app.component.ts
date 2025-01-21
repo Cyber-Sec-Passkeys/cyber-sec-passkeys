@@ -15,16 +15,14 @@ export class AppComponent implements OnInit {
   constructor(private keycloakService: KeycloakService) {}
 
   ngOnInit(): void {
-    this.keycloakService
-      .initKeycloak('test', 'master', 'http://localhost:8080')
-      .then((authenticated) => {
-        if (authenticated) {
-          console.log('User is authenticated');
-          this.refreshTokenPeriodically(); // Start refreshing the token periodically
-        } else {
-          console.log('User is not authenticated');
-        }
-      });
+    this.keycloakService.initKeycloak().then((authenticated) => {
+      if (authenticated) {
+        console.log('User is authenticated');
+        this.refreshTokenPeriodically(); // Start refreshing the token periodically
+      } else {
+        console.log('User is not authenticated');
+      }
+    });
   }
 
   refreshTokenPeriodically(): void {

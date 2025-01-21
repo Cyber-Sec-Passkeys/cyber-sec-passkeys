@@ -8,9 +8,8 @@ import { environment } from '../../../environments/environment.development';
 export class KeycloakService {
   private keycloakInstance: Keycloak.KeycloakInstance;
   private tokenKey =
-    'eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyNjk4YTc2Yy1kMDQzLTQ3OTItOWViMi1mZjU1MjY1NTY1NWQifQ.eyJleHAiOjAsImlhdCI6MTczNzIwMzEzOSwianRpIjoiMTQwYjM3NDEtMWQ3MS00OTdjLTk3ODYtNWJhN2M1YzIzYmIxIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvcmVhbG1zL21hc3RlciIsInR5cCI6IlJlZ2lzdHJhdGlvbkFjY2Vzc1Rva2VuIiwicmVnaXN0cmF0aW9uX2F1dGgiOiJhdXRoZW50aWNhdGVkIn0.OoqiFdMBhQ305h9W4wWlyQ-zhG4EqBPNitgPEGY0K5NG4CjkOSU410qNJCxvW_DdxS0M6l511eaiAekHKyoh-A';
+    'eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkN2I4ZjM3OS03MzE4LTRmMTYtYTQ5Ni1hYzZlZWJmZWRjNzMifQ.eyJleHAiOjAsImlhdCI6MTczNzQ4MTgxNiwianRpIjoiOTJlOTA3YzQtZmZhYS00MzM1LWJjMGQtYzcyM2I3MGI1MDVlIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvcmVhbG1zL21hc3RlciIsInR5cCI6IlJlZ2lzdHJhdGlvbkFjY2Vzc1Rva2VuIiwicmVnaXN0cmF0aW9uX2F1dGgiOiJhdXRoZW50aWNhdGVkIn0.2S00jqeiBhIBAJdvzhg-lpHtCjN1w4Vcf0mY7qbsc_u2WW4XLmQB-bHC1dHRZfmhnJCQursbpS_TUwrpZapu6w';
   private clientId = 'test';
-  private clientSecret = 'FSlu7KLLVDB2if7ndDQPnMtnEgQx2HWe';
   private tokenUrl =
     'http://localhost:8080/realms/master/protocol/openid-connect/token';
   private refreshTokenKey = 'refresh_token';
@@ -23,18 +22,8 @@ export class KeycloakService {
     });
   }
 
-  async initKeycloak(
-    clientId: string,
-    realm: string,
-    url: string
-  ): Promise<boolean> {
+  async initKeycloak(): Promise<boolean> {
     try {
-      this.keycloakInstance = new Keycloak({
-        url: url,
-        realm: realm,
-        clientId: clientId,
-      });
-
       const authenticated = await this.keycloakInstance.init({
         onLoad: 'check-sso',
         checkLoginIframe: false,
@@ -51,6 +40,17 @@ export class KeycloakService {
       return authenticated;
     } catch (error) {
       console.error('Keycloak initialization failed', error);
+      return false;
+    }
+  }
+
+  async register(): Promise<boolean> {
+    try {
+      // Redirect to Keycloak registration page
+      await this.keycloakInstance.register();
+      return true;
+    } catch (error) {
+      console.error('Registration failed', error);
       return false;
     }
   }
@@ -81,7 +81,6 @@ export class KeycloakService {
     const params = new URLSearchParams();
     params.set('grant_type', 'client_credentials');
     params.set('client_id', this.clientId);
-    params.set('client_secret', this.clientSecret);
 
     try {
       const response = await fetch(this.tokenUrl, {

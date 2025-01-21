@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+/*import { Component } from '@angular/core';
 import { LoginService } from '../core/services/login.service';
 
 @Component({
@@ -33,4 +33,47 @@ export class LoginComponent {
   }
 
 
+}*/
+
+
+import { Component } from '@angular/core';
+import { LoginService } from '../core/services/login.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
+})
+export class LoginComponent {
+  message = '';
+
+  constructor(private loginService: LoginService) {
+    this.checkForAuthorizationCode();
+  }
+
+  loginWithPasskey(): void {
+    this.loginService.loginWithPasskey();
+  }
+
+  private checkForAuthorizationCode(): void {
+    // Parse the URL for the "code" parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      // Exchange the authorization code for a token
+      this.loginService.exchangeCodeForToken(code).subscribe({
+        next: (response) => {
+          this.message = 'Login with passkey successful!';
+          console.log('Token:', response.access_token);
+          // Clear the code from the URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+        },
+        error: (err) => {
+          this.message = 'Login with passkey failed.';
+          console.error('Error:', err);
+        }
+      });
+    }
+  }
 }
