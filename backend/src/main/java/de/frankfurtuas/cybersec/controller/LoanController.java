@@ -27,11 +27,6 @@ public class LoanController {
     this.loanService = loanService;
   }
 
-  @GetMapping("/hello")
-  public String hello() {
-    return "nur zum Testing ---> das wird später gelöscht";
-  }
-
   /**
    * Retrieves a list of all loans.
    *
