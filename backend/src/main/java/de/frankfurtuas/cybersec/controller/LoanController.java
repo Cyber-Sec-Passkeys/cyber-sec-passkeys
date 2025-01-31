@@ -12,6 +12,7 @@ import java.util.List;
  * <p>
  * This controller handles HTTP requests.
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/loans")
 public class LoanController {

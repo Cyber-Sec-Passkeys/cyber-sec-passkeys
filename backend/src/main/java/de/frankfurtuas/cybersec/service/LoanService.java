@@ -1,6 +1,7 @@
 package de.frankfurtuas.cybersec.service;
 
 import de.frankfurtuas.cybersec.model.Loan;
+
 import java.util.List;
 
 /** Service interface for managing loans. */

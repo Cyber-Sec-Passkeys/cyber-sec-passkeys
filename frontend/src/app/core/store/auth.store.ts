@@ -1,15 +1,19 @@
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   patchState,
   signalStore,
+  withComputed,
   withHooks,
   withMethods,
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, filter, from, pipe, switchMap, tap } from 'rxjs';
+import { EMPTY, from, pipe, switchMap, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { JwtAccessToken } from '../models/keycloak.model';
 import { AuthService } from '../services/auth.service';
+import { KeycloakService } from '../services/keycloak.service';
 import { UserInfo } from './../../../../node_modules/angular-oauth2-oidc/types.d';
 
 interface AuthState {
@@ -31,9 +35,38 @@ const initialState: AuthState = {
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withComputed((state) => ({
+    isFinanceStaff: computed(() => state.rollen().includes('finance-staff')),
+    isLoanApprover: computed(() => state.rollen().includes('loan-approver')),
+    isLoanProcessor: computed(() => state.rollen().includes('loan-processor')),
+  })),
   withMethods(
-    (store, authService = inject(AuthService), router = inject(Router)) => {
-      const _onLoginPage = (): boolean => window.location.pathname === '/login';
+    (
+      store,
+      authService = inject(AuthService),
+      keycloakService = inject(KeycloakService),
+      router = inject(Router)
+    ) => {
+      const _decodeJwtToken = (
+        jwtAccessToken: JwtAccessToken | undefined
+      ): void => {
+        const isAccessTokenExpired = jwtAccessToken?.exp
+          ? jwtAccessToken.exp < Date.now() / 1000
+          : true;
+        if (isAccessTokenExpired) {
+          patchState(store, { authenticated: false });
+          //router.navigate(['/login']);
+          return;
+        }
+
+        patchState(store, {
+          loading: false,
+          authenticated: true,
+          rollen:
+            (jwtAccessToken?.resource_access[environment.keycloak.clientId]
+              ?.roles as string[]) ?? [],
+        });
+      };
 
       return {
         configureAndSignIn: rxMethod<void>(
@@ -44,26 +77,24 @@ export const AuthStore = signalStore(
               return from(authService.loadDiscoveryDocument());
             }),
             tap(() => patchState(store, { discoveryDocLoaded: true })),
-            filter(() => !_onLoginPage()),
             switchMap(() =>
               from(authService.parseTokenFromUrl()).pipe(
                 switchMap(() => {
-                  return from(authService.parseTokenFromUrl()).pipe(
-                    switchMap(() => {
-                      const state = authService.state;
-                      if (state && state !== 'undefined' && state !== 'null') {
-                        const stateUrl = !state.startsWith('/')
-                          ? decodeURIComponent(state)
-                          : state;
+                  const state = authService.state;
+                  if (state && state !== 'undefined' && state !== 'null') {
+                    const stateUrl = !state.startsWith('/')
+                      ? decodeURIComponent(state)
+                      : state;
 
-                        console.log(state);
-                        router.navigateByUrl(stateUrl);
-                      }
+                    router.navigateByUrl(stateUrl);
+                  }
 
-                      authService.setupAutomaticRefresh();
-                      return EMPTY;
-                    })
-                  );
+                  const jwtAccessToken: JwtAccessToken | undefined =
+                    authService.getAccessToken()!;
+                  _decodeJwtToken(jwtAccessToken);
+
+                  authService.setupAutomaticRefresh();
+                  return EMPTY;
                 })
               )
             )
@@ -72,6 +103,12 @@ export const AuthStore = signalStore(
         login: rxMethod<void>(
           pipe(
             tap(() => authService.singleSignOn()),
+            switchMap(() => EMPTY)
+          )
+        ),
+        register: rxMethod<void>(
+          pipe(
+            tap(() => keycloakService.register()),
             switchMap(() => EMPTY)
           )
         ),

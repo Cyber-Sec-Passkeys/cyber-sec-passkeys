@@ -12,6 +12,10 @@ export class LoanService {
 
   private baseUrl = environment.businessServiceUrl + '/loans';
 
+  public loans: Loan[] = [];
+
+  public selectedLoan: Loan | undefined;
+
   constructor() {}
 
   applyForLoan(loan: Loan): Observable<Loan> {

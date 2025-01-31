@@ -1,0 +1,26 @@
+<div class="mt-10">
+  @for (loan of loans; track loan.id) {
+  <div class="my-5">
+    <p-card>
+      <div class="flex flex-row justify-between items-center">
+        <p class="m-0 flex">
+          <b>Loan ID: {{ loan.id }} - Amount: {{ loan.amount }}</b> - Interest
+          Rate: {{ loan.interestRate }} - Duration In Months:
+          {{ loan.termInMonths }} - Status:
+          {{ loan.status }}
+        </p>
+
+        @if (hasApproverRole) {
+        <p-button
+          label="Antrag bearbeiten"
+          icon="pi pi-pencil"
+          severity="info"
+          (click)="editLoan(loan)"
+        />
+        }
+      </div>
+    </p-card>
+  </div>
+
+  }
+</div>

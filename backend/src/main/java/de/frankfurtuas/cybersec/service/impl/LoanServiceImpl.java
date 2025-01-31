@@ -1,9 +1,13 @@
 package de.frankfurtuas.cybersec.service.impl;
 
+import de.frankfurtuas.cybersec.model.Customer;
 import de.frankfurtuas.cybersec.model.Loan;
+import de.frankfurtuas.cybersec.repository.CustomerRepository;
 import de.frankfurtuas.cybersec.repository.LoanRepository;
 import de.frankfurtuas.cybersec.service.LoanService;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanServiceImpl implements LoanService {
 
   private final LoanRepository loanRepository;
+  private final CustomerRepository customerRepository;
 
   /**
    * Constructor for LoanServiceImpl.
    *
    * @param loanRepository LoanRepository
    */
-  public LoanServiceImpl(LoanRepository loanRepository) {
+  public LoanServiceImpl(LoanRepository loanRepository, CustomerRepository customerRepository) {
     this.loanRepository = loanRepository;
+    this.customerRepository = customerRepository;
   }
 
   @Override

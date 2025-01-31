@@ -4,14 +4,16 @@ import {
   OAuthService,
   OAuthSuccessEvent,
 } from 'angular-oauth2-oidc';
-import { environment } from '../../../environments/environment.development';
+import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
+import { JwtAccessToken } from '../models/keycloak.model';
 
 export const AUTH_CONFIG: AuthConfig = {
-  issuer: environment.keycloak.url,
+  issuer: `${environment.keycloak.url}/realms/${environment.keycloak.realm}`,
   redirectUri: environment.keycloak.redirectUrl,
   postLogoutRedirectUri: environment.keycloak.postLogoutRedirectUri,
   useSilentRefresh: true,
-  silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+  silentRefreshRedirectUri: window.location.origin + '/silent-check-sso.html',
   timeoutFactor: 0.8,
   clientId: environment.keycloak.clientId,
   scope: 'openid profile email',
@@ -68,8 +70,9 @@ export class AuthService {
     return VALID_ROLES.some((role) => roles.includes(role));
   }
 
-  public getAccessToken(): string {
-    return this.oAuthService.getAccessToken();
+  public getAccessToken(): JwtAccessToken | undefined {
+    const accessToken: string | null = this.oAuthService.getAccessToken();
+    return accessToken ? jwtDecode(accessToken) : undefined;
   }
 
   public setupAutomaticRefresh(): void {
