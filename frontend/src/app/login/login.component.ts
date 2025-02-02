@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LoginService } from '../core/services/login.service';
+import { RegistrationService } from '../core/services/register.service';
 
 @Component({
   selector: 'app-login',
@@ -8,7 +9,8 @@ import { LoginService } from '../core/services/login.service';
 })
 export class LoginComponent {
   
-  constructor(private loginService: LoginService) { }
+  constructor(private loginService: LoginService, private registrationService: RegistrationService) { }
+  
 
   onSubmit(event: Event) {
     event.preventDefault(); // Prevent form submission
@@ -30,6 +32,10 @@ export class LoginComponent {
 
   loginWithPasskey() {
     this.loginService.loginWithPasskey();
+  }
+
+  registerWithPasskey() {
+    this.registrationService.registerWithPasskey();
   }
 
 
