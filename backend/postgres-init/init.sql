@@ -15,7 +15,7 @@ CREATE TABLE customer (
     balanace DOUBLE PRECISION,         -- matches your code property
     monthly_income DOUBLE PRECISION,
     monthly_expense DOUBLE PRECISION,
-    internal_assesment DOUBLE PRECISION
+    internal_assessment DOUBLE PRECISION
 );
 
 -- ============================
@@ -37,7 +37,7 @@ CREATE TABLE loan (
 -- =====================================
 INSERT INTO customer (
     first_name, last_name, email, phone, street, city, zip,
-    credit_score, balanace, monthly_income, monthly_expense, internal_assesment
+    credit_score, balanace, monthly_income, monthly_expense, internal_assessment
 ) VALUES
 ('John',   'Doe',    'john@example.com',   '555-1000', '123 Main St', 'CityOne',   '11111', 700,  2000, 4000, 1500, 0.9),
 ('Jane',   'Smith',  'jane@example.com',   '555-2000', '456 Park Ave', 'CityTwo',  '22222', 720,  2500, 4500, 1400, 0.8),

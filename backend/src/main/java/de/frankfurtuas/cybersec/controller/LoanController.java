@@ -1,11 +1,19 @@
 package de.frankfurtuas.cybersec.controller;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import de.frankfurtuas.cybersec.model.Loan;
 import de.frankfurtuas.cybersec.service.LoanService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST Controller for managing loans.
@@ -64,6 +72,32 @@ public class LoanController {
   @PreAuthorize("hasRole('finance-staff')")
   public Loan getLoanById(@PathVariable Long id) {
     return loanService.getLoanById(id);
+  }
+
+  /**
+   * Claims the approval process for the loan with the given ID.
+   *
+   * @param id The unique identifier of the loan to approve.
+   * @return The updated Loan object with an 'Approved' status. @PreAuthorize Ensures only users
+   *     with the 'loan-approver' role can access this endpoint.
+   */
+  @PutMapping("/{id}/claim-approval")
+  @PreAuthorize("hasRole('loan-approver')")
+  public Loan claimApproval(@PathVariable Long id) {
+    return loanService.claimApproval(id);
+  }
+
+  /**
+   * Claims the processing of the loan with the given ID.
+   * 
+   * @param id The unique identifier of the loan to process.
+   * @return The updated Loan object with a 'Processed' status. @PreAuthorize Ensures only users
+   *    with the 'loan-processor' role can access this endpoint.
+   */
+  @PutMapping("/{id}/claim-processing")
+  @PreAuthorize("hasRole('loan-processor')")
+  public Loan claimProcessing(@PathVariable Long id) {
+    return loanService.claimProcessing(id);
   }
 
   /**

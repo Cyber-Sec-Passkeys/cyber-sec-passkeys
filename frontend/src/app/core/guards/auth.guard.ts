@@ -25,7 +25,7 @@ export const authGuard = (
         return router.createUrlTree(['/login']);
       }
 
-      if (!authStore.rollen().includes('finance-staff')) {
+      if (!authStore.roles().includes('finance-staff')) {
         return router.createUrlTree(['/403']);
       }
 

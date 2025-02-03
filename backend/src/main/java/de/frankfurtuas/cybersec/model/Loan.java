@@ -24,4 +24,8 @@ public class Loan {
   private double monthlyPayment;
 
   private int termInMonths;
+
+  private String approver;
+
+  private String processor;
 }

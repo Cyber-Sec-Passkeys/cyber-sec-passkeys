@@ -30,6 +30,20 @@ export class LoanService {
     return this.httpService.get<Loan>(`${this.baseUrl}/${id}`);
   }
 
+  claimApproval(id: number): Observable<Loan> {
+    return this.httpService.put<Loan>(
+      `${this.baseUrl}/${id}/claim-approval`,
+      {}
+    );
+  }
+
+  claimProcessing(id: number): Observable<Loan> {
+    return this.httpService.put<Loan>(
+      `${this.baseUrl}/${id}/claim-processing`,
+      {}
+    );
+  }
+
   approveLoan(id: number): Observable<Loan> {
     return this.httpService.put<Loan>(`${this.baseUrl}/${id}/approve`, {});
   }

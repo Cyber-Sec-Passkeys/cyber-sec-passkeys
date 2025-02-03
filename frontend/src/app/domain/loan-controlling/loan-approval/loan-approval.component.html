@@ -1,58 +1,40 @@
 <div class="card flex justify-center">
   <p-stepper [value]="1" class="basis-[50rem] mt-10">
     <p-step-list>
-      <p-step [value]="1">Prüfung</p-step>
-      <p-step [value]="2">Auszahlung</p-step>
+      <p-step [value]="1">Approval</p-step>
+      <p-step [value]="2" [disabled]="true">Payment Processing</p-step>
     </p-step-list>
     <p-step-panels>
       <p-step-panel [value]="1">
         <ng-template #content let-activateCallback="activateCallback">
           <div class="flex flex-col h-48">
             <div
-              class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+              class="flex-col flex justify-center items-center font-medium gap-4"
             >
+              @if (selectedLoan === undefined) {
+              <p-progress-spinner ariaLabel="loading" />
+              } @else {
+              <h2 class="text-2xl">Loan</h2>
+              <p>Loan amount: {{ selectedLoan!.amount }}</p>
+              <p>Interest rate: {{ selectedLoan!.interestRate }}%</p>
+              <p>Loan term: {{ selectedLoan!.termInMonths }} months</p>
+
+              <h2 class="text-2xl">Customer</h2>
+              <p>First name: {{ customer!.firstName }}</p>
+              <p>Last name: {{ customer!.lastName }}</p>
+              <p>Credit score: {{ customer!.creditScore }}</p>
+              <p>Monthly income: {{ customer!.monthlyIncome }}</p>
+
               <p-button
                 label="Approve"
                 severity="info"
-                class="w-full max-w-[17.35rem]"
+                class="w-full max-w-[17.35rem] mt-4"
                 styleClass="w-full mx-auto"
-                [disabled]="true"
+                [disabled]="!canApprove"
+                (click)="approveLoan()"
               />
+              }
             </div>
-            <div class="flex pt-6 justify-end">
-              <p-button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                (onClick)="activateCallback(2)"
-              />
-            </div>
-          </div>
-        </ng-template>
-      </p-step-panel>
-
-      <p-step-panel [value]="2">
-        <ng-template #content let-activateCallback="activateCallback">
-          <div class="flex flex-col h-48">
-            <div
-              class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
-            >
-              Content II
-            </div>
-          </div>
-          <div class="flex pt-6 justify-between">
-            <p-button
-              label="Back"
-              severity="secondary"
-              icon="pi pi-arrow-left"
-              (onClick)="activateCallback(1)"
-            />
-            <p-button
-              label="Next"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              (onClick)="activateCallback(3)"
-            />
           </div>
         </ng-template>
       </p-step-panel>

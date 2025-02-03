@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Implementation of the LoanService interface.
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanServiceImpl implements LoanService {
 
   private final LoanRepository loanRepository;
-  private final CustomerRepository customerRepository;
 
   /**
    * Constructor for LoanServiceImpl.
@@ -31,12 +32,11 @@ public class LoanServiceImpl implements LoanService {
    */
   public LoanServiceImpl(LoanRepository loanRepository, CustomerRepository customerRepository) {
     this.loanRepository = loanRepository;
-    this.customerRepository = customerRepository;
   }
 
   @Override
   public Loan applyForLoan(Loan loan) {
-    loan.setStatus("Pending");
+    loan.setStatus("PENDING");
     return loanRepository.save(loan);
   }
 
@@ -53,22 +53,48 @@ public class LoanServiceImpl implements LoanService {
   }
 
   @Override
+  public Loan claimApproval(Long id) {
+    Loan loan = getLoanById(id);
+    if (!"PENDING".equals(loan.getStatus())) {
+      throw new IllegalStateException("Loan must be in 'PENDING' status to claim for approval.");
+    }
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String approver = auth.getName();
+    loan.setApprover(approver);
+    loan.setStatus("IN_APPROVAL");
+    return loanRepository.save(loan);
+  }
+
+  @Override
+  public Loan claimProcessing(Long id) {
+    Loan loan = getLoanById(id);
+    if (!"APPROVED".equals(loan.getStatus())) {
+      throw new IllegalStateException("Loan must be in 'APPROVED' status to claim for processing.");
+    }
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String processor = auth.getName();
+    loan.setProcessor(processor);
+    loan.setStatus("IN_PROCESSING");
+    return loanRepository.save(loan);
+  }
+
+  @Override
   public Loan approveLoan(Long id) {
     Loan loan = getLoanById(id);
-    if (!"Pending".equals(loan.getStatus())) {
-      throw new IllegalStateException("Loan must be in 'Pending' status to approve.");
+    if (!"IN_APPROVAL".equals(loan.getStatus())) {
+      throw new IllegalStateException("Loan must be in 'IN_APPROVAL' status to approve.");
     }
-    loan.setStatus("Approved");
+    loan.setStatus("APPROVED");
     return loanRepository.save(loan);
   }
 
   @Override
   public Loan processLoan(Long id) {
     Loan loan = getLoanById(id);
-    if (!"Approved".equals(loan.getStatus())) {
-      throw new IllegalStateException("Loan must be in 'Approved' status to process.");
+    if (!"IN_PROCESSING".equals(loan.getStatus())) {
+      throw new IllegalStateException("Loan must be in 'IN_PROCESSING' status to process.");
     }
-    loan.setStatus("Processed");
+    loan.setStatus("PROCESSED");
     return loanRepository.save(loan);
   }
 }

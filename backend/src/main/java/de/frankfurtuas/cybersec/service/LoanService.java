@@ -31,6 +31,22 @@ public interface LoanService {
   Loan getLoanById(Long id);
 
   /**
+   * Claims a loan application for review.
+   *
+   * @param id The unique identifier of the loan to claim.
+   * @return The updated Loan object with a claimed status.
+   */
+  Loan claimApproval(Long id);
+
+  /**
+   * Claims a loan application for processing.
+   *
+   * @param id The unique identifier of the loan to claim.
+   * @return The updated Loan object with a claimed status.
+   */
+   Loan claimProcessing(Long id);
+
+  /**
    * Approves a loan application based on its ID.
    *
    * @param id The unique identifier of the loan to approve.

@@ -36,5 +36,5 @@ public class Customer {
 
     private double monthlyExpense;
 
-    private double internalAssesment;
+    private double internalAssessment;
 }

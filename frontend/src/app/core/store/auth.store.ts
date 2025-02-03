@@ -9,7 +9,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, from, pipe, switchMap, tap } from 'rxjs';
+import { EMPTY, filter, from, pipe, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { JwtAccessToken } from '../models/keycloak.model';
 import { AuthService } from '../services/auth.service';
@@ -20,7 +20,7 @@ interface AuthState {
   authenticated: boolean;
   loading: boolean;
   userInfo: any;
-  rollen: string[];
+  roles: string[];
   discoveryDocLoaded: boolean;
 }
 
@@ -28,7 +28,7 @@ const initialState: AuthState = {
   authenticated: false,
   loading: false,
   userInfo: {} as UserInfo,
-  rollen: [],
+  roles: [],
   discoveryDocLoaded: false,
 };
 
@@ -36,9 +36,10 @@ export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((state) => ({
-    isFinanceStaff: computed(() => state.rollen().includes('finance-staff')),
-    isLoanApprover: computed(() => state.rollen().includes('loan-approver')),
-    isLoanProcessor: computed(() => state.rollen().includes('loan-processor')),
+    username: computed(() => state.userInfo().username),
+    isFinanceStaff: computed(() => state.roles().includes('finance-staff')),
+    isLoanApprover: computed(() => state.roles().includes('loan-approver')),
+    isLoanProcessor: computed(() => state.roles().includes('loan-processor')),
   })),
   withMethods(
     (
@@ -55,16 +56,24 @@ export const AuthStore = signalStore(
           : true;
         if (isAccessTokenExpired) {
           patchState(store, { authenticated: false });
-          //router.navigate(['/login']);
+          router.navigate(['/login']);
           return;
         }
+
+        const userInfo = {
+          username: jwtAccessToken?.preferred_username,
+          email: jwtAccessToken?.email,
+        };
+
+        const roles =
+          (jwtAccessToken?.resource_access[environment.keycloak.clientId]
+            ?.roles as string[]) ?? [];
 
         patchState(store, {
           loading: false,
           authenticated: true,
-          rollen:
-            (jwtAccessToken?.resource_access[environment.keycloak.clientId]
-              ?.roles as string[]) ?? [],
+          userInfo: userInfo,
+          roles: roles,
         });
       };
 
@@ -77,6 +86,11 @@ export const AuthStore = signalStore(
               return from(authService.loadDiscoveryDocument());
             }),
             tap(() => patchState(store, { discoveryDocLoaded: true })),
+            filter(
+              () =>
+                window.location.pathname !== '/login' &&
+                window.location.pathname !== '/register'
+            ),
             switchMap(() =>
               from(authService.parseTokenFromUrl()).pipe(
                 switchMap(() => {
@@ -91,6 +105,7 @@ export const AuthStore = signalStore(
 
                   const jwtAccessToken: JwtAccessToken | undefined =
                     authService.getAccessToken()!;
+
                   _decodeJwtToken(jwtAccessToken);
 
                   authService.setupAutomaticRefresh();
