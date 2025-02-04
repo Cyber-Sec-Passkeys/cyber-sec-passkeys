@@ -21,13 +21,6 @@ export const AUTH_CONFIG: AuthConfig = {
   showDebugInformation: environment.keycloak.showDebugInformation,
 };
 
-export const VALID_ROLES: string[] = [
-  'customer',
-  'finance-staff',
-  'loan-approver',
-  'load-processor',
-];
-
 @Injectable({
   providedIn: 'root',
 })
@@ -61,12 +54,6 @@ export class AuthService {
 
   public logout(): void {
     this.oAuthService.logOut();
-  }
-
-  public hasValidRole(): boolean {
-    const roles =
-      this.oAuthService.getIdentityClaims()['realm_access']['roles'];
-    return VALID_ROLES.some((role) => roles.includes(role));
   }
 
   public getAccessToken(): JwtAccessToken | undefined {
