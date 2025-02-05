@@ -15,7 +15,6 @@
         @if (loan.status === 'PENDING') {
         <p-button
           label="Claim Approval Task"
-          icon="pi pi-lock"
           severity="success"
           [disabled]="!hasApproverRole()"
           (click)="claimApprovalTask(loan)"
@@ -31,7 +30,6 @@
         } @else if (loan.status === 'APPROVED') {
         <p-button
           label="Claim Payment Processing Task"
-          icon="pi pi-lock"
           severity="help"
           [disabled]="!hasProcessorRole() || loan.approver === username()"
           (click)="claimProcessingTask(loan)"
